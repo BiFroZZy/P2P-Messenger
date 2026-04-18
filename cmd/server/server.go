@@ -68,20 +68,22 @@ func (s *Server) SetRoutes(){
 	})
 	public := s.echo.Group("public")
 	{
-		public.POST("/auth/post", auth.Auth)
+		public.POST("/auth/post", auth.AuthUser)
 		public.GET("/auth", handlers.ShowAuth)
+		public.POST("/register/post", auth.RegUser)
+		public.GET("/register", handlers.ShowReg)
 	}
 	users := s.echo.Group("/users")
-	{
+	users.Use(auth.AuthMiddleware)
+	{	
 		users.GET("/main", handlers.MainHandler)
-		users.GET("/messages", handlers.HandlerMessages)
+		users.GET("/messages", handlers.ShowMessages)
 	}
 }
 func (s *Server) Start() error{
 	s.Middleware()
 	s.SetRoutes()
 	s.SetTemplates()
-	// TODO: добавить graceful shutdown
 	serverErr := make(chan error, 1)
 	go func(){
 		if err := s.echo.Start(s.cfg.ServerPort); !errors.Is(err, http.ErrServerClosed){

@@ -12,10 +12,15 @@ func MainHandler(c echo.Context) error{
 
 func ShowAuth(c echo.Context) error{
 	return c.Render(http.StatusOK, "auth.html", map[string]interface{}{
-		"Title": "Auth",
+		"Title": "Authorization",
 	})
 }
-func HandlerMessages(c echo.Context) error{
+func ShowReg(c echo.Context) error {
+	return c.Render(http.StatusOK, "reg.html", map[string]interface{}{
+		"Title": "Registration",
+	})
+}
+func ShowMessages(c echo.Context) error{
 	return c.Render(http.StatusOK, "index.html", map[string]interface{}{
 		"Title":"Messages",
 	})
