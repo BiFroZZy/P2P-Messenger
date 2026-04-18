@@ -14,9 +14,14 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
-
+        .show_error{
+            background-color: rgb(226, 85, 85);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+        }
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #434c4e;;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -101,16 +106,20 @@
 <body>
     <div class="login-container">
         <h2>Добро пожаловать</h2>
-
-        <form action="/public/auth/post" method="POST">
+        {{if .Error}}
+            <div class="show_error">
+                {{.Error}}
+            </div>
+        {{end}}
+        <form action="/public/auth/post" method="post" autocomplete="off">
             <div class="form-group">
                 <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="username" placeholder="Введите логин" required>
+                <input type="text" id="auth_login" name="auth_login" placeholder="Введите логин" required >
             </div>
 
             <div class="form-group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                <input type="password" id="auth_password" name="auth_password" placeholder="Введите пароль" required>
             </div>
 
             <button type="submit">Войти</button>

@@ -19,14 +19,16 @@ func ParseJWT(tokenString string) (*jwt.Token, error) {
 }
 
 func GenerateJWT(userID uuid.UUID) (string, error){
-    cfg := config.Config{}
-    user := models.User{}
-    models.Validation(cfg)
-    models.Validation(user)
+    cfg,err := config.Load()
+    if err !=nil{
+        return "", err
+    }
+    var user models.User
+    // models.Validation(cfg)
+    // models.Validation(user)
     claims := jwt.MapClaims{
         "user_id": userID,
         "exp":     cfg.JWTexp, 
-        // "iat":     cfg.JWTiss,
         "iss":     user.Name,
     }
 

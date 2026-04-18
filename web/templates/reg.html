@@ -1,0 +1,146 @@
+{{ define "reg.html" }}
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger | {{.Title}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        .show_error{
+            background-color: rgb(226, 85, 85);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+        }
+        body {
+            background: #434c4e;;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Регистрация</h2>
+        {{if .Error}}
+            <div class="show_error">
+                {{.Error}}
+            </div>
+        {{end}}
+        <form action="/public/register/post" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="reg_username">Имя пользователя</label>
+                <input type="text" id="reg_username" name="reg_username" placeholder="Введите имя" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reg_login">Логин пользователя</label>
+                <input type="text" id="reg_login" name="reg_login" placeholder="Введите логин" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reg_password">Пароль</label>
+                <input type="password" id="reg_password" name="reg_password" placeholder="Введите пароль" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reg_email">Почта пользователя</label>
+                <input type="email" id="reg_email" name="reg_email" placeholder="Введите почту" required>
+            </div>
+
+            <button type="submit">Зарегистрироваться</button>
+
+            <div class="links">
+                <a href="/public/auth">Уже есть аккаунт?</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+
+{{ end }}

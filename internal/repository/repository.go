@@ -7,53 +7,75 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
-	"messenger/internal/logger"
+	l "messenger/internal/logger"
 	"messenger/internal/models"
 	"messenger/internal/config"
 )
 var (
-	log = logger.InitLogger()
+	logger = l.InitLogger()
 	ctx = context.Background()
 )
 
-func InitConnection() (*pgx.Conn, error){
-	cfg := config.Config{}
-	conn, err := pgx.Connect(ctx, cfg.DatabaseURL)
-	if err != nil {
-		log.Error().Err(err).Msg("Error occured while connecting to database")
+type UserRepository struct{
+	conn *pgx.Conn
+	ctx context.Context
+}
+
+type Result struct{
+	UserID 			uuid.UUID
+	UserLogin 		string
+	UserPassword 	string
+	UserEmail 		string
+}
+
+func (r *UserRepository) Close() error{
+	if r.conn != nil{
+		return r.conn.Close(r.ctx)
+	}
+	return nil
+}
+
+func NewConnection() (*UserRepository, error){
+	cfg, err := config.Load()
+	if err != nil{
+		logger.Error().Err(err).Msg("Failed to get configs while creating connection to database")
 		return nil, err
 	}
-	return conn, nil
+	conn, err := pgx.Connect(ctx, cfg.DatabaseURL)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error occured while connecting to database")
+		return nil, err
+	}
+	return &UserRepository{
+		conn: conn,
+		ctx: ctx,
+	}, nil
 }
 
-func GetUser(getUserLogin string)(uuid.UUID, string, string, string){
-	conn, err := InitConnection()
-	if err != nil{
-		log.Error().Err(err).Msg("Error occired while getting user info")
-	}
-	defer conn.Close(ctx)
-
-	user := models.User{}
-	err = conn.QueryRow(ctx, os.Getenv("GET_USER"), getUserLogin).Scan(&user.ID, &user.Login, &user.Password, &user.Email)
+func (r *UserRepository) GetUser(getUserLogin string)(*Result, error){
+	var user models.User
+	err := r.conn.QueryRow(ctx, os.Getenv("GET_USER"), getUserLogin).Scan(&user.ID, &user.Login, &user.Password, &user.Email)
 	if err != nil{
 		if err == pgx.ErrNoRows{
-			log.Error().Err(err).Msg("There is no such user")
+			logger.Error().Err(err).Msg("No such user")
 		}
-		log.Error().Err(err).Msg("Error occured while querying user")
+		logger.Error().Err(err).Msg("Error occured while querying user")
 	}
-
-	return user.ID, user.Login, user.Password, user.Email
+	resultStruct := Result{
+		UserID: user.ID,
+		UserLogin: user.Login,
+		UserPassword: user.Password,
+		UserEmail: user.Email,
+	}
+	return &resultStruct, nil
 }
-func SetUser(getUserLogin, getUserPassword string){
-	conn, err := InitConnection()
-	if err != nil{
-		log.Error().Err(err).Msg("Can't connect to DB")
-	}
-	defer conn.Close(ctx)
 
-	userUUID := uuid.New()
-	_, err = conn.Exec(ctx, os.Getenv("SET_USER"), getUserLogin, getUserPassword, userUUID)
+func (r *UserRepository) SetUser(username, login, password, email string) error{
+	id := uuid.New()
+	_, err := r.conn.Exec(ctx, os.Getenv("SET_USER"), id, username, login, password, email)
 	if err != nil{
-		log.Error().Err(err).Msg("Can't set user in DB")
+		logger.Error().Err(err).Msg("Can't insert user data in database")
+		return err
 	}
+	return nil
 }

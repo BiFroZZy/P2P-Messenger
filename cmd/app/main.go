@@ -18,7 +18,7 @@ func main(){
 	if err := godotenv.Load(); err != nil{
 		logger.Err(err).Msg("Error occured while getting .env file")
 	}
-	if err := database.NewMigrate("./internal/database/migrations"); err != nil{
+	if err := database.NewMigrate("./migrations", cfg.DatabaseURL); err != nil{
 		logger.Error().Err(err).Msg("Failed to run migration")	
 	}
 	server := server.New(cfg)
