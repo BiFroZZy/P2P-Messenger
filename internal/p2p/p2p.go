@@ -21,7 +21,7 @@ func CreateSourceNode() host.Host{
 	logger.Info().Msg("Host created!"+node.ID().String())
 	return node
 }
-func CreateTargerNode() host.Host{
+func CreateTargetNode() host.Host{
 	node, err := libp2p.New(libp2p.Security(noise.ID, noise.New))
 	if err != nil{
 		logger.Error().Err(err).Msg("Error occurde while creating target node")
@@ -40,14 +40,14 @@ func ConnectingToPeers(host host.Host){
 	}
 }
 
-func NewStream(host host.Host){
-	stream, err := host.NewStream(context.Background(), peerID, "/my-protocol/1.0.0")
-	if err != nil {
-		logger.Error().Err(err).Msg("")
-	}
+// func NewStream(host host.Host){
+// 	stream, err := host.NewStream(context.Background(), peerID, "/my-protocol/1.0.0")
+// 	if err != nil {
+// 		logger.Error().Err(err).Msg("Error occured while creating stream")
+// 	}
 
-	_, err = stream.Write([]byte("Привет, P2P!"))
-	if err != nil {
-		logger.Error().Err(err).Msg("")
-	}
-}
+// 	_, err = stream.Write([]byte("Привет, P2P!"))
+// 	if err != nil {
+// 		logger.Error().Err(err).Msg("Error occured while writing message")
+// 	}
+// }

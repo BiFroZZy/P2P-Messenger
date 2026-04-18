@@ -1,13 +1,14 @@
 package jwt
 
 import (
-	"time"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
-    _"messenger/internal/models"
+	"messenger/internal/models"
+    "messenger/internal/config"
+	_ "messenger/internal/models"
 )
 var secretKey = []byte(os.Getenv("SECRET_KEY"))
 
@@ -18,13 +19,15 @@ func ParseJWT(tokenString string) (*jwt.Token, error) {
 }
 
 func GenerateJWT(userID uuid.UUID) (string, error){
-    // claims := models.JWT{
-    //     UserID: userID,
-    //     Exp: ,
-    // }
+    cfg := config.Config{}
+    user := models.User{}
+    models.Validation(cfg)
+    models.Validation(user)
     claims := jwt.MapClaims{
         "user_id": userID,
-        "exp":     time.Now().Add(time.Second * 300).Unix(), 
+        "exp":     cfg.JWTexp, 
+        // "iat":     cfg.JWTiss,
+        "iss":     user.Name,
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
