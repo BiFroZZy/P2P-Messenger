@@ -2,20 +2,24 @@ package server
 
 import (
 	"context"
+	"errors"
 	"html/template"
 	"io"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
 	"messenger/internal/auth"
 	"messenger/internal/config"
-	// "messenger/internal/logger"
+
 	l "messenger/internal/logger"
 	"messenger/web/handlers"
 )
-var log = l.InitLogger()
+var logger = l.InitLogger()
 
 type Server struct{
 	echo *echo.Echo
@@ -54,7 +58,7 @@ func (s *Server) SetTemplates(){
 		"web/templates/*.html",
 	)
 	if err != nil{
-		log.Err(err).Msg("Error occured while getting HTML templates")
+		logger.Err(err).Msg("Error occured while getting HTML templates")
 	}
 	s.echo.Renderer = &Template{templates: tmpl}
 }
@@ -78,11 +82,30 @@ func (s *Server) Start() error{
 	s.SetRoutes()
 	s.SetTemplates()
 	// TODO: добавить graceful shutdown
-	err := s.echo.Start(s.cfg.ServerPort)
-	if err != nil{
-		log.Error().Err(err).Msg("Error occured while starting server")
+	serverErr := make(chan error, 1)
+	go func(){
+		if err := s.echo.Start(s.cfg.ServerPort); !errors.Is(err, http.ErrServerClosed){
+			logger.Error().Err(err).Msg("Error occured while starting server")
+			serverErr<-err
+		}
+		close(serverErr)
+	}()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+	select {
+	case err := <-serverErr:
 		return err
+	case <-quit:
+		logger.Info().Msg("Shutdown signal recieved")
+	case <- s.ctx.Done():
+		logger.Info().Msg("Context canceled")
 	}
-	s.echo.Logger.Fatal(err)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), s.cfg.ShutdownTimeout)
+	defer cancel()
+	if err := s.echo.Shutdown(shutdownCtx); err != nil{
+		if serverClose := s.echo.Close(); serverClose != nil{
+			return errors.Join(err, serverClose)
+		}
+	}
 	return nil
 }

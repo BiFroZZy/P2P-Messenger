@@ -6,19 +6,23 @@ import (
 	"messenger/cmd/server"
 	l "messenger/internal/logger"
 	"messenger/internal/config"
+	"messenger/internal/database"
 )
 
 func main(){
-	log := l.InitLogger()
+	logger := l.InitLogger()
 	cfg, err := config.Load()
 	if err!=nil{
-		log.Error().Err(err).Msg("Can't load configs")
+		logger.Error().Err(err).Msg("Can't load configs")
 	}
 	if err := godotenv.Load(); err != nil{
-		log.Err(err).Msg("Error occured while getting .env file")
+		logger.Err(err).Msg("Error occured while getting .env file")
+	}
+	if err := database.NewMigrate("./internal/database/migrations"); err != nil{
+		logger.Error().Err(err).Msg("Failed to run migration")	
 	}
 	server := server.New(cfg)
 	server.Start()
 
-	log.Info().Msg("App is started!")
+	logger.Info().Msg("App is started!")
 }

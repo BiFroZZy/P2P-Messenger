@@ -2,33 +2,37 @@ package models
 
 import (
 	"time"
-	"html/template"
-	"io"
 
 	"github.com/google/uuid"
-	"github.com/labstack/echo/v4"
+	"github.com/go-playground/validator/v10"
+
+	l "messenger/internal/logger"
+)
+var (
+	logger = l.InitLogger()
 )
 
-type Template struct{
-	templates *template.Template
-}
-
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error{
-	return t.templates.ExecuteTemplate(w, name, data) 
-}
-
-type JWT struct{
-	UserID uuid.UUID
-	Exp time.Time
-	Iat time.Time
-	Iss string
+type Message struct{
+	ID 			uuid.UUID 	`validate:"uuid,required"`
+	CreatedAt 	time.Time 	`validate:"required"`
+	Content 	string		`validate:"alphanum"`
+	UserName 	string 		`validate:"min=2,max=50"`
 }
 
 type User struct {
-	ID uuid.UUID
-	Name string
-	Login string
-	Password string
-	Email string
-	CreatedAt time.Time
+	ID 			uuid.UUID 	`validate:"uuid,required"`
+	Name 		string		`validate:"min=2,max=20,required"`
+	Login 		string		`validate:"min=4,max=10,required"`
+	Password 	string		`validate:"min=6,max=10,required"`
+	Email 		string		`validate:"email,required"`
+	CreatedAt 	time.Time	`validate:"required"`
+}
+
+func Validation(data interface{}) error{
+	validate := validator.New()
+	if err := validate.Struct(data);err != nil{
+		logger.Error().Err(err).Msg("Error occured while validating struct")
+		return err
+	}
+	return nil
 }
