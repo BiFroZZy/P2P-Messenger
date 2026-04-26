@@ -12,8 +12,6 @@ var (
 	logger = l.InitLogger()
 )
 
-
-
 type Result struct{
 	UserID 			uuid.UUID
 	UserLogin 		string
