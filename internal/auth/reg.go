@@ -13,7 +13,6 @@ func RegUser(c echo.Context) error{
 	regUsername := c.FormValue("reg_username")
 	regLogin := c.FormValue("reg_login")
 	regPassword := c.FormValue("reg_password")
-	regEmail := c.FormValue("reg_email")
 	
 	repo, err := repository.NewConnection()
 	if err != nil{
@@ -25,6 +24,7 @@ func RegUser(c echo.Context) error{
 	if err!=nil{
 		return err
 	}
+
 	hashedPass, err := HashPassword(regPassword)
 	if err != nil{
 		logger.Error().Err(err).Msg("Failed to hash password")
@@ -33,21 +33,22 @@ func RegUser(c echo.Context) error{
 			"Error": "Internal server error",
 		})
 	}
+	
 	ok := bcrypt.CompareHashAndPassword([]byte(resultStruct.UserPassword), []byte(regPassword))
-	if regLogin==resultStruct.UserLogin && ok == nil{
+	if regLogin == resultStruct.UserLogin && ok == nil{
 		return c.Render(http.StatusUnauthorized, "reg.html", map[string]interface{}{
 			"Title": "Registration",
 			"Error": "Password or login already exists",
 		})
 	}
-	if resultStruct.UserEmail == regEmail{
-		return c.Render(http.StatusUnauthorized, "reg.html", map[string]interface{}{
-			"Title": "Registration",
-			"Error": "You already have an account",
-		})
-	}
+	// if resultStruct.UserEmail == regEmail{
+	// 	return c.Render(http.StatusUnauthorized, "reg.html", map[string]interface{}{
+	// 		"Title": "Registration",
+	// 		"Error": "You already have an account",
+	// 	})
+	// }
 	
-	repo.SetUser(regUsername, regLogin, string(hashedPass), regEmail)
+	repo.SetUser(regUsername, regLogin, string(hashedPass))
 	
 	return c.Redirect(http.StatusSeeOther, "/users/messages")
 }

@@ -12,6 +12,15 @@ var (
 	logger = l.InitLogger()
 )
 
+
+
+type Result struct{
+	UserID 			uuid.UUID
+	UserLogin 		string
+	UserPassword 	string
+	UserEmail 		string
+}
+
 type Message struct{
 	ID 			uuid.UUID 	`validate:"uuid,required"`
 	CreatedAt 	time.Time 	`validate:"required"`
