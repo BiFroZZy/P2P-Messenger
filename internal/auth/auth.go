@@ -76,11 +76,12 @@ func AuthUser(c echo.Context) error{
 		MaxAge: 300,
 	})
 	ok := bcrypt.CompareHashAndPassword([]byte(resultStruct.UserPassword), []byte(authPassword))
+	
 	if authLogin == resultStruct.UserLogin && ok == nil{
 		return c.Redirect(http.StatusSeeOther, "/users/messages")
 	}else{
 		return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
-			"Title": "Auth",
+			"Title": "Authorization",
 			"Error": "Wrong login or password",
 		})
 	}
