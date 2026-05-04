@@ -74,7 +74,9 @@ func (s *Server) SetRoutes(){
 		public.GET("/register", handlers.ShowReg)
 	}
 	users := s.echo.Group("/users")
-	// users.Use(auth.AuthMiddleware) // Здесь че-то не то
+
+	users.Use(auth.AuthMiddleware) // Здесь че-то не то
+	
 	{	
 		users.GET("/main", handlers.MainHandler)
 		users.GET("/messages", handlers.ShowMessages)

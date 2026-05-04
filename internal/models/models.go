@@ -13,26 +13,25 @@ var (
 )
 
 type Result struct{
-	UserID 			uuid.UUID
-	UserLogin 		string
-	UserPassword 	string
-	UserEmail 		string
+	UserID 			uuid.UUID	`validate:"uuid,required"`
+	UserName		string		`validate:"min=2,max=20,required"`
+	UserLogin 		string		`validate:"email"`
+	UserPassword 	string		`validate:"min=6,max=10,required"`
 }
 
 type Message struct{
-	ID 			uuid.UUID 	`validate:"uuid,required"`
-	CreatedAt 	time.Time 	`validate:"required"`
-	Content 	string		`validate:"alphanum"`
-	UserName 	string 		`validate:"min=2,max=50"`
+	ID 				uuid.UUID 	`validate:"uuid,required"`
+	CreatedAt 		time.Time 	`validate:"required"`
+	Content 		string		`validate:"alphanum"`
+	UserName 		string 		`validate:"min=2,max=50"`
 }
 
 type User struct {
-	ID 			uuid.UUID 	`validate:"uuid,required"`
-	Name 		string		`validate:"min=2,max=20,required"`
-	Login 		string		`validate:"min=4,max=10,required"`
-	Password 	string		`validate:"min=6,max=10,required"`
-	Email 		string		`validate:"email,required"`
-	CreatedAt 	time.Time	`validate:"required"`
+	ID 				uuid.UUID 	`validate:"uuid,required"`
+	Name 			string		`validate:"min=2,max=20,required"`
+	Login 			string		`validate:"email,required"`
+	Password 		string		`validate:"min=6,max=10,required"`
+	CreatedAt 		time.Time	`validate:"required"`
 }
 
 func Validation(data interface{}) error{

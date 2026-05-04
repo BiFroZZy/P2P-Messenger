@@ -5,8 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-
-	"messenger/internal/models"
+    
     "messenger/internal/config"
 	_ "messenger/internal/models"
 )
@@ -18,20 +17,18 @@ func ParseJWT(tokenString string) (*jwt.Token, error) {
     })
 }
 
-func GenerateJWT(userID uuid.UUID) (string, error){
-    cfg,err := config.Load()
-    if err !=nil{
-        return "", err
+func GenerateJWT(userID uuid.UUID, username string) (string, error){
+    cfg, err := config.Load()
+    if err != nil{
+        return "Failed to loaf configs", err
     }
-    var user models.User
     // models.Validation(cfg)
     // models.Validation(user)
     claims := jwt.MapClaims{
         "user_id": userID,
         "exp":     cfg.JWTexp, 
-        "iss":     user.Name,
+        "iss":     username,
     }
-
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
     return token.SignedString(secretKey)
 }

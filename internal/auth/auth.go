@@ -23,7 +23,7 @@ func HashPassword(password string) ([]byte, error){
 		logger.Error().Err(err).Msg("Error occured while hashing the password")
 		return nil, err
 	}
-	return hashedPass,nil
+	return hashedPass, nil
 }
 
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -38,7 +38,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token, err := j.ParseJWT(cookie.Value)
 		if err != nil || !token.Valid {
 			logger.Error().Err(err).Msg("Error in parsing cookie value!")
-			return c.Redirect(http.StatusUnauthorized, "/public/auth")
+			// return c.Redirect(http.StatusUnauthorized, "/public/auth")
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			c.Set("user_id", claims["user_id"])
@@ -59,12 +59,19 @@ func AuthUser(c echo.Context) error{
 
 	resultStruct, err := repo.GetUser(authLogin)
 	if err != nil{
-		return err
+		logger.Error().Err(err).Msg("Failed to get resultStruct")
+		return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
+			"Title": "Authorization",
+			"Error": "Wrong login or password",
+		})
 	}
 
-	token, err := j.GenerateJWT(resultStruct.UserID)
+	token, err := j.GenerateJWT(resultStruct.UserID, resultStruct.UserName)
 	if err != nil{
-		return c.JSON(http.StatusInternalServerError, "Error occured while generating JWT")
+		return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
+			"Title": "Registration",
+			"Error": "Internal server error",
+		})
 	}
 	c.SetCookie(&http.Cookie{
 		Name: "token",
@@ -73,16 +80,15 @@ func AuthUser(c echo.Context) error{
 		Secure: false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		MaxAge: 300,
+		MaxAge: 600,
 	})
 	ok := bcrypt.CompareHashAndPassword([]byte(resultStruct.UserPassword), []byte(authPassword))
 	
 	if authLogin == resultStruct.UserLogin && ok == nil{
 		return c.Redirect(http.StatusSeeOther, "/users/messages")
-	}else{
-		return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
-			"Title": "Authorization",
-			"Error": "Wrong login or password",
-		})
 	}
+	return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
+		"Title": "Authorization",
+		"Error": "Wrong login or password",
+	})
 }

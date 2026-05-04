@@ -14,7 +14,7 @@ import (
 func main(){
 	logger := l.InitLogger()
 	cfg, err := config.Load()
-	if err!=nil{
+	if err != nil{
 		logger.Error().Err(err).Msg("Can't load configs")
 	}
 	if err := godotenv.Load(); err != nil{

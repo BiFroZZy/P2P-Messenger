@@ -11,6 +11,7 @@ import (
 
 	l "messenger/internal/logger"
 )
+
 var logger = l.InitLogger()
 
 func CreateSourceNode() host.Host{
@@ -21,6 +22,7 @@ func CreateSourceNode() host.Host{
 	logger.Info().Msg("Host created!"+node.ID().String())
 	return node
 }
+
 func CreateTargetNode() host.Host{
 	node, err := libp2p.New(libp2p.Security(noise.ID, noise.New))
 	if err != nil{
@@ -40,14 +42,18 @@ func ConnectingToPeers(host host.Host){
 	}
 }
 
-// func NewStream(host host.Host){
-// 	stream, err := host.NewStream(context.Background(), peerID, "/my-protocol/1.0.0")
-// 	if err != nil {
-// 		logger.Error().Err(err).Msg("Error occured while creating stream")
-// 	}
+func NewStream(host host.Host, peerID peer.ID, message string){
+	stream, err := host.NewStream(context.Background(), peerID, "/my-protocol/1.0.0")
+	if err != nil {
+		logger.Error().Err(err).Msg("Error occured while creating stream")
+	}
 
-// 	_, err = stream.Write([]byte("Привет, P2P!"))
-// 	if err != nil {
-// 		logger.Error().Err(err).Msg("Error occured while writing message")
-// 	}
-// }
+	_, err = stream.Write([]byte(message))
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to write message")
+	}
+}
+
+func GetMessage(){
+	
+}
