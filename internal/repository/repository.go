@@ -11,6 +11,7 @@ import (
 	"messenger/internal/models"
 	"messenger/internal/config"
 )
+
 var (
 	logger = l.InitLogger()
 	ctx = context.Background()
@@ -19,6 +20,7 @@ var (
 type UserRepository struct{
 	conn 		*pgx.Conn
 	ctx 		context.Context
+	user  		models.User
 }
 
 func (r *UserRepository) Close() error{
@@ -39,15 +41,16 @@ func NewConnection() (*UserRepository, error){
 		logger.Error().Err(err).Msg("Error occured while connecting to database")
 		return nil, err
 	}
+	var user models.User
 	return &UserRepository{
 		conn: conn,
 		ctx: ctx,
+		user: user,
 	}, nil
 }
 
 func (r *UserRepository) GetUser(getUserLogin string)(*models.Result, error){
-	var user models.User
-	err := r.conn.QueryRow(ctx, os.Getenv("GET_USER"), getUserLogin).Scan(&user.ID, &user.Login, &user.Password)
+	err := r.conn.QueryRow(r.ctx, os.Getenv("GET_USER"), getUserLogin).Scan(&r.user.ID, &r.user.Name, &r.user.Login, &r.user.Password)
 	if err != nil{
 		if err == pgx.ErrNoRows{
 			logger.Error().Err(err).Msg("No such user")
@@ -57,18 +60,28 @@ func (r *UserRepository) GetUser(getUserLogin string)(*models.Result, error){
 		return nil, err
 	}
 	resultStruct := models.Result{
-		UserID: user.ID,
-		UserLogin: user.Login,
-		UserPassword: user.Password,
+		UserID: 		r.user.ID,
+		UserName:		r.user.Name,	
+		UserLogin: 		r.user.Login,
+		UserPassword: 	r.user.Password,
 	}
 	return &resultStruct, nil
 }
 
 func (r *UserRepository) SetUser(username, login, password string) error{
 	id := uuid.New()
-	_, err := r.conn.Exec(ctx, os.Getenv("SET_USER"), id, username, login, password)
+	_, err := r.conn.Exec(r.ctx, os.Getenv("SET_USER"), id, username, login, password)
 	if err != nil{
 		logger.Error().Err(err).Msg("Can't insert user data in database")
+		return err
+	}
+	return nil
+}
+
+func (r *UserRepository) DeleteUser(userID uuid.UUID) error{
+	_, err := r.conn.Exec(r.ctx, os.Getenv("DELETE_USER"), userID)
+	if err != nil{
+		logger.Error().Err(err).Msg("Failed to delete user from database")
 		return err
 	}
 	return nil
