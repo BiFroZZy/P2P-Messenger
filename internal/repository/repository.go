@@ -51,19 +51,19 @@ func NewConnection() (*UserRepository, error){
 
 func (r *UserRepository) GetUser(getUserLogin string)(*models.Result, error){
 	err := r.conn.QueryRow(r.ctx, os.Getenv("GET_USER"), getUserLogin).Scan(&r.user.ID, &r.user.Name, &r.user.Login, &r.user.Password)
-	if err != nil{
-		if err == pgx.ErrNoRows{
-			logger.Error().Err(err).Msg("No such user")
-			return nil, err
-		}
-		logger.Error().Err(err).Msg("Error occured while querying user")
-		return nil, err
-	}
 	resultStruct := models.Result{
 		UserID: 		r.user.ID,
 		UserName:		r.user.Name,	
 		UserLogin: 		r.user.Login,
 		UserPassword: 	r.user.Password,
+	}
+	if err != nil{
+		if err == pgx.ErrNoRows{
+			logger.Error().Err(err).Msg("No such user")
+			return &resultStruct, nil
+		}
+		logger.Error().Err(err).Msg("Error occured while querying user")
+		return nil, err
 	}
 	return &resultStruct, nil
 }

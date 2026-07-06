@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
     
     "messenger/internal/config"
-	_ "messenger/internal/models"
+	"messenger/internal/models"
 )
 var secretKey = []byte(os.Getenv("SECRET_KEY"))
 
@@ -20,10 +20,9 @@ func ParseJWT(tokenString string) (*jwt.Token, error) {
 func GenerateJWT(userID uuid.UUID, username string) (string, error){
     cfg, err := config.Load()
     if err != nil{
-        return "Failed to loaf configs", err
+        return "Failed to load configs", err
     }
-    // models.Validation(cfg)
-    // models.Validation(user)
+    models.Validation(cfg)
     claims := jwt.MapClaims{
         "user_id": userID,
         "exp":     cfg.JWTexp, 

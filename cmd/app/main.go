@@ -23,10 +23,9 @@ func main(){
 	if err := database.NewMigrate("./migrations", cfg.DatabaseURL); err != nil{
 		logger.Error().Err(err).Msg("Failed to run migration")	
 	}
-	server := server.New(cfg)
+	server, err := server.New(cfg)
 	if err := server.Start(); err !=nil{
 		logger.Error().Err(err).Msg("Failed to start the app")
 	}
-
 	logger.Info().Msg("App is started!")
 }
