@@ -32,7 +32,7 @@ func RegUser(c echo.Context) error{
 	if err!=nil{
 		return c.Render(http.StatusUnauthorized, "reg.html", map[string]interface{}{
 			"Title": "Registration",
-			"Error": "There is no such user",
+			"Error": err,
 		})
 	}
 	ok := bcrypt.CompareHashAndPassword([]byte(resultStruct.UserPassword), []byte(regPassword))

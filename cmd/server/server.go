@@ -2,9 +2,9 @@ package server
 
 import (
 	"context"
+	"io"
 	"errors"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -25,27 +25,31 @@ type Server struct{
 	echo *echo.Echo
 	cfg *config.Config
 	ctx context.Context
-}
-
-type Template struct{
 	templates *template.Template
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error{
-	return t.templates.ExecuteTemplate(w, name, data) 
+func (s *Server) Render(w io.Writer, name string, data interface{}, c echo.Context) error{
+	return s.templates.ExecuteTemplate(w, name, data) 
 }
 
-func New(cfg *config.Config) *Server{
+func New(cfg *config.Config) (*Server, error){
 	e := echo.New()
 	ctx := context.Background()
+	tmpl, err := template.ParseGlob("web/templates/*.html",)
+	if err != nil{
+		logger.Err(err).Msg("Error occured while getting HTML templates")
+		return nil, err
+	}
+	e.Renderer=&Server{templates: tmpl}
 	srv := &Server{
 		echo: e,
 		cfg: cfg,
 		ctx: ctx,
+		templates: tmpl,
 	}
 	srv.echo.HideBanner = true
 	srv.echo.HidePort = true
-	return srv
+	return srv, nil
 }
 
 func (s *Server) Middleware(){
@@ -53,15 +57,6 @@ func (s *Server) Middleware(){
 	s.echo.Use(middleware.Recover())
 }
 
-func (s *Server) SetTemplates(){
-	tmpl, err := template.ParseGlob(
-		"web/templates/*.html",
-	)
-	if err != nil{
-		logger.Err(err).Msg("Error occured while getting HTML templates")
-	}
-	s.echo.Renderer = &Template{templates: tmpl}
-}
 func (s *Server) SetRoutes(){
 	s.echo.GET("/", func(c echo.Context) error{
 		return c.Redirect(http.StatusSeeOther, "/public/auth")
@@ -74,9 +69,7 @@ func (s *Server) SetRoutes(){
 		public.GET("/register", handlers.ShowReg)
 	}
 	users := s.echo.Group("/users")
-
 	users.Use(auth.AuthMiddleware) // Здесь че-то не то
-	
 	{	
 		users.GET("/main", handlers.MainHandler)
 		users.GET("/messages", handlers.ShowMessages)
@@ -85,7 +78,6 @@ func (s *Server) SetRoutes(){
 func (s *Server) Start() error{
 	s.Middleware()
 	s.SetRoutes()
-	s.SetTemplates()
 	serverErr := make(chan error, 1)
 	go func(){
 		if err := s.echo.Start(s.cfg.ServerPort); !errors.Is(err, http.ErrServerClosed){
