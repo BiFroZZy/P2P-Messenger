@@ -54,6 +54,3 @@ func NewStream(host host.Host, peerID peer.ID, message string){
 	}
 }
 
-func GetMessage(){
-	
-}

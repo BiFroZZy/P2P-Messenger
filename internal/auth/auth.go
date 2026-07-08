@@ -85,7 +85,7 @@ func AuthUser(c echo.Context) error{
 	ok := bcrypt.CompareHashAndPassword([]byte(resultStruct.UserPassword), []byte(authPassword))
 	
 	if authLogin == resultStruct.UserLogin && ok == nil{
-		return c.Redirect(http.StatusSeeOther, "/users/messages")
+		return c.Redirect(http.StatusSeeOther, "/users/"+resultStruct.UserID.String()+"/messages")
 	}
 	return c.Render(http.StatusUnauthorized, "auth.html", map[string]interface{}{
 		"Title": "Authorization",

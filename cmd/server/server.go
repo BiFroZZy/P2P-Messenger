@@ -68,11 +68,11 @@ func (s *Server) SetRoutes(){
 		public.POST("/register/post", auth.RegUser)
 		public.GET("/register", handlers.ShowReg)
 	}
-	users := s.echo.Group("/users")
-	users.Use(auth.AuthMiddleware) // Здесь че-то не то
+	users := s.echo.Group("/users/:id")
+	users.Use(auth.AuthMiddleware) 
 	{	
-		users.GET("/main", handlers.MainHandler)
 		users.GET("/messages", handlers.ShowMessages)
+		users.GET("/profile", handlers.ShowProfile)
 	}
 }
 func (s *Server) Start() error{

@@ -47,5 +47,5 @@ func RegUser(c echo.Context) error{
 		return err
 	}
 	
-	return c.Redirect(http.StatusSeeOther, "/users/messages")
+	return c.Redirect(http.StatusSeeOther, "/users/"+resultStruct.UserID.String()+"/messages")
 }

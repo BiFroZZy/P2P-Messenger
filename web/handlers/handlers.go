@@ -6,10 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MainHandler(c echo.Context) error{
-	return c.String(http.StatusOK, "Info is here")
-}
-
 func ShowAuth(c echo.Context) error{
 	return c.Render(http.StatusOK, "auth.html", map[string]interface{}{
 		"Title": "Authorization",
@@ -23,5 +19,12 @@ func ShowReg(c echo.Context) error {
 func ShowMessages(c echo.Context) error{
 	return c.Render(http.StatusOK, "index.html", map[string]interface{}{
 		"Title":"Messages",
+		"UserID": c.Param("id"),
+	})
+}
+func ShowProfile(c echo.Context) error{
+	return c.Render(http.StatusOK, "profile.html", map[string]interface{}{
+		"Title":"Profle",
+		"UserID": c.Param("id"),
 	})
 }
