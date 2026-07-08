@@ -9,8 +9,6 @@ import (
 	"messenger/internal/database"
 )
 
-// TODO: из-за authMiddleware не идет редирект на /users/messages
-
 func main(){
 	logger := l.InitLogger()
 	cfg, err := config.Load()
