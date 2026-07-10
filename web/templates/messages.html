@@ -1,4 +1,4 @@
-{{ define "index.html" }}
+{{ define "messages.html" }}
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -153,7 +153,9 @@
       font-weight: 450;
       color: #1c1c1e;
     }
-
+    .messages{
+      margin-bottom: 70%;
+    }
     .footer-note {
       margin-top: auto;
       text-align: center;
@@ -228,15 +230,15 @@
 <div class="container">
   <div class="card">
     <div class="nav-top-left">
-      <a href="/users/{{.UserID}}/messages" class="nav-icon" title="Сообщения">
-        <svg viewBox="0 0 24 24">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </a>
       <a href="/users/{{.UserID}}/profile" class="nav-icon" title="Профиль">
         <svg viewBox="0 0 24 24">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+      <a href="/users/{{.UserID}}/messages" class="nav-icon" title="Сообщения">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
       </a>
       <a href="/public/auth" class="nav-icon" title="Авторизация">
@@ -248,7 +250,9 @@
       </a>
     </div>
 
-    <h1>Ваши<br>сообщения</h1>
+    <div class="messages">
+      <h1>Ваши<br>сообщения</h1>
+    </div>
     <div class="divider"></div>
   </div>
 </div>

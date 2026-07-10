@@ -1,4 +1,4 @@
-{{ define "profile" }}
+{{ define "profile.html" }}
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, date=no, email=no, address=no">
   <title>Messenger | {{.Title}}</title>
-  <style>
+<style>
     * {
       margin: 0;
       padding: 0;
@@ -57,7 +57,22 @@
       gap: 12px;
       align-items: center;
     }
-
+    .profile-nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: #b0b0b1;
+      color: #000000;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+    }
     .nav-icon {
       display: flex;
       align-items: center;
@@ -89,8 +104,6 @@
       background: #007aff;
       color: white;
     }
-
-    /* SVG иконки */
     .nav-icon svg {
       width: 22px;
       height: 22px;
@@ -104,7 +117,6 @@
     /* Центральный контент */
     .center-content {
       display: flex;
-      /* flex-direction: column; */
       align-items: center;
       flex: 1;
       margin-bottom: 80%;
@@ -122,29 +134,32 @@
     /* Блок справа с информацией о пользователе */
     .right-info {
       position: absolute;
-      top: 28px;
-      right: 28px;
+      top: 30px;
+      right: 60px;
       text-align: right;
     }
 
     .user-name {
-      font-size: 1.1rem;
+      font-size: 30px;
       font-weight: 600;
       color: #1c1c1e;
       margin-bottom: 4px;
     }
 
     .user-nick {
-      font-size: 0.9rem;
-      color: #6b6b6f;
+      font-size: 25px;
+      color: #1c1c1e;
       margin-bottom: 4px;
     }
 
     .user-email {
-      font-size: 0.85rem;
-      color: #8e8e93;
+      font-size: 25px;
+      color: #1c1c1e;
     }
-
+    .user-created {
+      font-size: 25px;
+      color: #1c1c1e;
+    }
     .divider {
       width: 48px;
       height: 2px;
@@ -240,45 +255,45 @@
         font-size: 0.65rem;
       }
     }
-  </style>
+</style>
 </head>
 <body>
 <div class="container">
   <div class="card">
-    <!-- Левая навигация (не меняем) -->
     <div class="nav-top-left">
-      <a href="/users/{{.UserID}}/messages" class="nav-icon" title="Сообщения">
-        <svg viewBox="0 0 24 24">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </a>
       <a href="/users/{{.UserID}}/profile" class="nav-icon" title="Профиль">
         <svg viewBox="0 0 24 24">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>
         </svg>
       </a>
+      <a href="/users/{{.UserID}}/messages" class="nav-icon" title="Сообщения">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </a>
       <a href="/public/auth" class="nav-icon" title="Авторизация">
         <svg viewBox="0 0 24 24">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
           <polyline points="10 17 15 12 10 7"/>
+
           <line x1="15" y1="12" x2="3" y2="12"/>
         </svg>
       </a>
     </div>
 
     <div class="right-info">
-      <div class="user-name">ФИО</div>
-      <div class="user-nick">Ник</div>
-      <div class="user-email">Почта</div>
+        <svg viewBox="0 0 24 24" class="profile-nav-icon">
+          <path d="M20 24v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="12" r="5"/>
+        </svg>
+      <div class="user-nick">Ник:{{.Nickname}}</div>
+      <div class="user-email">Почта:{{.Email}}</div>
+      <!-- <div class="user-created">Дата создания:{{.CreatedAt}}</div> -->
     </div>
 
     <div class="center-content">
       <h1>Ваш<br>профиль</h1>
-    </div>
-
-    <div class="footer-note">
-      &copy; 2026 Messenger
     </div>
   </div>
 </div>
