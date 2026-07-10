@@ -68,6 +68,24 @@ func (r *UserRepository) GetUser(getUserLogin string)(*models.Result, error){
 	return &resultStruct, nil
 }
 
+func (r *UserRepository) GetUserByID(getUserID string)(*models.Result, error){
+	err := r.conn.QueryRow(r.ctx, os.Getenv("GET_USER_BY_ID"), getUserID).Scan(&r.user.Name, &r.user.Login, &r.user.Password)
+	resultStruct := models.Result{
+		UserName:		r.user.Name,	
+		UserLogin: 		r.user.Login,
+		UserPassword: 	r.user.Password,
+	}
+	if err != nil{
+		if err == pgx.ErrNoRows{
+			logger.Error().Err(err).Msg("No such user")
+			return &resultStruct, nil
+		}
+		logger.Error().Err(err).Msg("Error occured while querying user")
+		return nil, err
+	}
+	return &resultStruct, nil
+}
+
 func (r *UserRepository) SetUser(username, login, password string) error{
 	id := uuid.New()
 	_, err := r.conn.Exec(r.ctx, os.Getenv("SET_USER"), id, username, login, password)
