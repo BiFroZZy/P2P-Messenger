@@ -24,6 +24,7 @@ func main(){
 	server, err := server.New(cfg)
 	if err := server.Start(); err !=nil{
 		logger.Error().Err(err).Msg("Failed to start the app")
+	} else {
+		logger.Info().Msg("App is started!")
 	}
-	logger.Info().Msg("App is started!")
 }

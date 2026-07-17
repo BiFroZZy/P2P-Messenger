@@ -46,8 +46,6 @@
       flex-direction: column;
       justify-content: center;
     }
-
-    /* Навигация слева сверху — вертикальная колонка */
     .nav-top-left {
       position: absolute;
       top: 28px;
@@ -56,22 +54,6 @@
       flex-direction: column;
       gap: 12px;
       align-items: center;
-    }
-    .profile-nav-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      background: #b0b0b1;
-      color: #000000;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-size: 18px;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
     }
     .nav-icon {
       display: flex;
@@ -114,7 +96,6 @@
       stroke-linejoin: round;
     }
 
-    /* Центральный контент */
     .center-content {
       display: flex;
       align-items: center;
@@ -131,12 +112,35 @@
       line-height: 1.2;
     }
 
-    /* Блок справа с информацией о пользователе */
     .right-info {
       position: absolute;
       top: 30px;
       right: 60px;
       text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .profile-avatar {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: #b0b0b1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .profile-avatar svg {
+      width: 80px;
+      height: 80px;
+      fill: none;
+      stroke: #000000;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .user-name {
@@ -176,7 +180,6 @@
       letter-spacing: 0.2px;
       padding-top: 20px;
     }
-
     @media (max-width: 640px) {
       body {
         padding: 12px;
@@ -208,6 +211,14 @@
       .right-info {
         top: 20px;
         right: 16px;
+      }
+      .profile-avatar {
+        width: 60px;
+        height: 60px;
+      }
+      .profile-avatar svg {
+        width: 32px;
+        height: 32px;
       }
       .user-name {
         font-size: 1rem;
@@ -245,6 +256,14 @@
         top: 16px;
         right: 12px;
       }
+      .profile-avatar {
+        width: 50px;
+        height: 50px;
+      }
+      .profile-avatar svg {
+        width: 26px;
+        height: 26px;
+      }
       .user-name {
         font-size: 0.9rem;
       }
@@ -276,20 +295,21 @@
         <svg viewBox="0 0 24 24">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
           <polyline points="10 17 15 12 10 7"/>
-
           <line x1="15" y1="12" x2="3" y2="12"/>
         </svg>
       </a>
     </div>
 
     <div class="right-info">
-        <svg viewBox="0 0 24 24" class="profile-nav-icon">
-          <path d="M20 24v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="12" r="5"/>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
         </svg>
-      <div class="user-nick">Ник:{{.Nickname}}</div>
-      <div class="user-email">Почта:{{.Email}}</div>
-      <!-- <div class="user-created">Дата создания:{{.CreatedAt}}</div> -->
+      </div>
+      <div class="user-nick">Ник: {{.Nickname}}</div>
+      <div class="user-email">Почта: {{.Email}}</div>
+      <div class="user-created">Дата создания: {{.CreatedAt}}</div> 
     </div>
 
     <div class="center-content">

@@ -16,7 +16,6 @@ type Config struct{
 	ShutdownTimeout	time.Duration	`envconfig:"SHUTDOWN_TIMEOUT" required:"true"`
 	DatabaseURL 	string 			`envconfig:"DB_URL" required:"true"`
 	JWTexp 			int64 			`envconfig:"JWT_EXP" required:"true"`
-	JWTiat 			int64 			`envconfig:"JWT_IAT" required:"true"`
 }
 
 func Load() (*Config, error){
