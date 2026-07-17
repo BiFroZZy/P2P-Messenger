@@ -17,6 +17,7 @@ type Result struct{
 	UserName		string		`validate:"min=2,max=20,required"`
 	UserLogin 		string		`validate:"email"`
 	UserPassword 	string		`validate:"min=6,max=10,required"`
+	CreatedAt 		time.Time	`validate:"required"`
 }
 
 type Message struct{

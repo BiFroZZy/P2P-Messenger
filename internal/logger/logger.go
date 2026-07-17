@@ -20,6 +20,7 @@ func LoggerOption() io.Writer{
 	return zerolog.ConsoleWriter{
 		Out:        os.Stderr,
 		TimeFormat: time.RFC3339,
+		NoColor:    true,
 		FormatLevel: func(i interface{}) string {
 			return strings.ToUpper(fmt.Sprintf("[%s]", i))
 		},

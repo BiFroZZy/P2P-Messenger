@@ -38,8 +38,12 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token, err := j.ParseJWT(cookie.Value)
 		if err != nil || !token.Valid {
 			logger.Error().Err(err).Msg("Error in parsing cookie value!")
-			// return c.Redirect(http.StatusUnauthorized, "/public/auth")
+			// return c.Render(http.StatusOK, "auth.html", map[string]interface{}{
+            //     "Title": "Authorization",
+            //     "Error": "Internal server error",
+            // })
 		}
+
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			c.Set("user_id", claims["user_id"])
 		}

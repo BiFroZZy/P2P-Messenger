@@ -41,5 +41,6 @@ func ShowProfile(c echo.Context) error{
 		"UserID": userID,
 		"Nickname": resultStruct.UserName,
       	"Email": resultStruct.UserLogin,
+		"CreatedAt": resultStruct.CreatedAt.Format("2006-01-02 15:04:05"), // userCreatedAt.Format("2006-01-02 15:04:05")
 	})
 }

@@ -69,11 +69,12 @@ func (r *UserRepository) GetUser(getUserLogin string)(*models.Result, error){
 }
 
 func (r *UserRepository) GetUserByID(getUserID string)(*models.Result, error){
-	err := r.conn.QueryRow(r.ctx, os.Getenv("GET_USER_BY_ID"), getUserID).Scan(&r.user.Name, &r.user.Login, &r.user.Password)
+	err := r.conn.QueryRow(r.ctx, os.Getenv("GET_USER_BY_ID"), getUserID).Scan(&r.user.Name, &r.user.Login, &r.user.Password, &r.user.CreatedAt)
 	resultStruct := models.Result{
 		UserName:		r.user.Name,	
 		UserLogin: 		r.user.Login,
 		UserPassword: 	r.user.Password,
+		CreatedAt:		r.user.CreatedAt,
 	}
 	if err != nil{
 		if err == pgx.ErrNoRows{
